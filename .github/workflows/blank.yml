@@ -1,0 +1,24 @@
+name: Check Branch Naming
+
+on:
+  push:
+  pull_request:  
+    branches:
+      - "*"
+
+jobs:
+  check-branch-naming:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Branch Naming
+        uses: actions/checkout@v2
+        
+      - name: Run Custom Script
+        run: |
+          branch_name=$(git rev-parse --abbrev-ref HEAD)
+          
+          if [[ ! $branch_name =~ ^(feature|release|bugfix|hotfix)\/[a-zA-Z0-9_]+\/[0-9]+\/.+$ ]]; then
+            echo "Invalid branch name. Branch names must follow the pattern: {feature/release/bugfix}/hotfix/developer_name/ticket_no/task_title"
+            exit 1
+          fi
