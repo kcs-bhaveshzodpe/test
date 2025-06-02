@@ -1,0 +1,16 @@
+jobs:
+  check-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check if branch is up to date with production
+        run: |
+          git fetch origin production
+          if ! git merge-base --is-ancestor origin/production HEAD; then
+            echo "Branch is not up to date with production."
+            exit 1
+          fi
