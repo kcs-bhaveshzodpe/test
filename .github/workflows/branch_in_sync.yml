@@ -1,16 +1,30 @@
+name: Check Branch Sync with Production
+
+on:
+  pull_request:
+    branches:
+      - production  # Adjust this if your default branch is named differently
+
 jobs:
   check-sync:
+    name: Verify Source Branch is Up-to-Date with Production
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout PR branch
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Important to fetch full history for merge-base check
+
+      - name: Fetch production branch
+        run: git fetch origin production
 
       - name: Check if branch is up to date with production
         run: |
-          git fetch origin production
-          if ! git merge-base --is-ancestor origin/production HEAD; then
-            echo "Branch is not up to date with production."
+          if git merge-base --is-ancestor origin/production HEAD; then
+            echo "Branch is up to date with production."
+          else
+            echo "❌ Branch is not up to date with production."
+            echo "Please rebase or merge production into your branch."
             exit 1
           fi
