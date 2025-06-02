@@ -1,7 +1,12 @@
 name: Check Branch Naming
 
 on:
+  create:
+    branches:
+      - "*"
   push:
+    branches:
+      - "*"
   pull_request:  
     branches:
       - "*"
